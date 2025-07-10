@@ -1,6 +1,6 @@
 import unittest
 
-from block_markdown import BlockType, markdown_to_blocks, block_to_block_type, markdown_to_html_node
+from block_markdown import BlockType, markdown_to_blocks, block_to_block_type, markdown_to_html_node, extract_title
 
 class TestBlockMarkdown(unittest.TestCase):
     def test_markdown_to_blocks(self):
@@ -68,6 +68,29 @@ the **same** even with inline stuff
             html,
             "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
         )
+
+    def test_extract_title_heading_one_found(self):
+        heading = extract_title("""
+# Heading One Found!!!
+
+Something else...
+
+> Doesn't matter anyway
+""")
+        self.assertEqual("Heading One Found!!!", heading)
+
+    def test_extract_title_heading_one_not_found(self):
+        with self.assertRaises(BaseException) as cm:
+            heading = extract_title("""
+## Heading One Not Found???
+
+What else...
+
+> Absolutely matters...
+""")
+
+        the_exception = cm.exception
+        self.assertEqual(str(the_exception), "No Heading 1 found!")
 
 if __name__ == "__main__":
     unittest.main()
