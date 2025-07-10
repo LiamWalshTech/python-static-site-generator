@@ -3,6 +3,18 @@ import shutil
 from textnode import TextNode
 from block_markdown import markdown_to_html_node, extract_title
 
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+    paths = os.listdir(dir_path_content)
+    for path in paths:
+        content_path = f"{dir_path_content}/{path}"
+        dest_path = f"{dest_dir_path}/{path}"
+        html_path = f"{dest_dir_path}/{path.replace('md', 'html')}"
+        if os.path.isfile(content_path):
+            generate_page(content_path, template_path, html_path)
+        else:
+            os.mkdir(dest_path)
+            generate_pages_recursive(content_path, template_path, dest_path)
+
 def generate_page(from_path, template_path, dest_path):
     print(f"Generating page from '{from_path}' to '{dest_path}' using '{template_path}'.")
     with open(from_path) as f:
@@ -38,7 +50,7 @@ def copy_contents(srcDir, destDir):
 def main():
     shutil.rmtree("public", True)
     copy_contents("static", "public")
-    generate_page("content/index.md", "template.html", "public/index.html")
+    generate_pages_recursive("content", "template.html", "public")
 
 if __name__=="__main__":
     main()
