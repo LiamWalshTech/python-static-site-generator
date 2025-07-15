@@ -27,7 +27,7 @@ def generate_page(from_path, template_path, dest_path, basepath):
     html_string = markdown_to_html_node(content).to_html()
     title = extract_title(content)
 
-    html_full = template.replace("{{ Title }}", title).replace("{{ Content }}", html_string).replace("href=\"/", "href=\"{basepath}").replace("src=\"/", "src=\"{basepath}")
+    html_full = template.replace("{{ Title }}", title).replace("{{ Content }}", html_string).replace("href=\"/", f"href=\"{basepath}").replace("src=\"/", f"src=\"{basepath}")
 
     open(dest_path, "x")
     with open(dest_path, "w") as page_file:
@@ -52,7 +52,7 @@ def main():
     basepath = "/"
     
     if sys.argv[0]:
-        basepath = sys.argv[0]
+        basepath = sys.argv[1]
 
     shutil.rmtree("docs", True)
     copy_contents("static", "docs")
